@@ -16,6 +16,8 @@ public class ShiftEnchant extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Starting up <name>. If you need me to update this plugin, email at gogobebe2@gmail.com");
         getConfig().options().copyDefaults(true);
+        initializeDefaultItemEnchantments();
+        initializeDefaultEnchantments();
         saveDefaultConfig();
     }
 
@@ -30,7 +32,7 @@ public class ShiftEnchant extends JavaPlugin {
         return false;
     }
 
-    private void initializeEnchantments() {
+    private void initializeDefaultEnchantments() {
         for (Enchantment enchantment : Enchantment.values()) {
             for (int level = enchantment.getStartLevel(); level < enchantment.getMaxLevel(); level++) {
                 getConfig().addDefault("enchantments." + enchantment.getName() + ".level." + level + ".gold", 5);
@@ -38,15 +40,16 @@ public class ShiftEnchant extends JavaPlugin {
         }
     }
 
-    private void initializeEnchantables() {
+    private void initializeDefaultItemEnchantments() {
         for (Material material : Material.values()) {
-            List<Enchantment> enchantments = new ArrayList<>();
+            List<String> enchantments = new ArrayList<>();
             ItemStack item = new ItemStack(material);
             for (Enchantment enchantment : Enchantment.values()) {
                 if (enchantment.canEnchantItem(item)) {
-                    enchantments.add(enchantment);
+                    enchantments.add(enchantment.getName());
                 }
             }
+            getConfig().addDefault("items." + material.name() + ".possibleEnchantments", enchantments);
         }
     }
 }
