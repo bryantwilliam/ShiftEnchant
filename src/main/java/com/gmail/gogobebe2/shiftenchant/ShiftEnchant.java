@@ -140,8 +140,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             if (gold.getAmount() < goldToTake) {
                 gold.setAmount(0);
                 goldToTake -= gold.getAmount();
-            }
-            else {
+            } else {
                 gold.setAmount(gold.getAmount() - goldToTake);
                 goldToTake = 0;
             }
@@ -160,10 +159,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
         for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
-            if (!(enchantmentTarget.equals(EnchantmentTarget.ALL) || enchantmentTarget.equals(EnchantmentTarget.ARMOR))) {
-                if (enchantmentTarget.includes(item)) {
-                    return enchantmentTarget;
-                }
+            if (enchantmentTarget.includes(item)) {
+                return enchantmentTarget;
             }
         }
         return null;
