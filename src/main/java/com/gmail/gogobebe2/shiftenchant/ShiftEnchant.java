@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -46,7 +47,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             }
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
-            player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop");
+            player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop...");
             openGui(player, getPossibleEnchantmentTargets(item.getType()));
             return true;
         }
@@ -80,6 +81,14 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Inventory inventory = event.getInventory();
+        if (!ChatColor.stripColor(inventory.getName()).equals("Enchantment Shop")) {
+            return;
+        }
+        event.getPlayer().sendMessage(ChatColor.DARK_PURPLE + "Closing enchantment shop...");
+    }
     @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClick(InventoryClickEvent event) {
