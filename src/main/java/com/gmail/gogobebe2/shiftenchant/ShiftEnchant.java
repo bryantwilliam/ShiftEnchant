@@ -154,7 +154,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
         player.getItemInHand().addEnchantment(Enchantment.getByName(bookName), level);
         player.sendMessage(ChatColor.AQUA + player.getItemInHand().getType().name() + " enchanted with "
-                + ChatColor.BLUE + bookName + " for " + ChatColor.GOLD + cost);
+                + ChatColor.BLUE + bookName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
+                + ChatColor.AQUA + " gold");
     }
 
     private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
