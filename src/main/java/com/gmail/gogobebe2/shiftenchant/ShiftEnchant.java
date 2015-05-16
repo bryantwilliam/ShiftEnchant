@@ -62,9 +62,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
             System.out.println("DEBUG1, 1: " + enchantmentTarget.name());
             System.out.println("DEBUG1, 2: " + enchantment.getItemTarget());
-            if (enchantment.getItemTarget() != null && (enchantment.getItemTarget().equals(enchantmentTarget)
-                    || enchantment.getItemTarget().equals(EnchantmentTarget.ARMOR)
-                    || enchantment.getItemTarget().equals(EnchantmentTarget.ALL))) {
+            if (enchantment.getItemTarget() != null && (enchantment.getItemTarget().equals(enchantmentTarget))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
@@ -85,6 +83,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
@@ -150,27 +149,19 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
         player.closeInventory();
 
-
         player.getItemInHand().addEnchantment(Enchantment.getByName(bookName), level);
-        player.sendMessage(ChatColor.AQUA + player.getItemInHand().getType().name() + " enchanted with "
+        player.sendMessage(ChatColor.DARK_PURPLE + player.getItemInHand().getType().name() + ChatColor.AQUA + " enchanted with "
                 + ChatColor.BLUE + bookName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
                 + ChatColor.AQUA + " gold");
     }
 
     private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
         for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
-            if (!(enchantmentTarget.equals(EnchantmentTarget.ALL) || enchantmentTarget.equals(EnchantmentTarget.ARMOR))) {
-                if (enchantmentTarget.includes(item)) {
-                    return enchantmentTarget;
-                }
+            if (enchantmentTarget.includes(item)) {
+                return enchantmentTarget;
             }
         }
-        if (EnchantmentTarget.ARMOR_FEET.includes(item) || EnchantmentTarget.ARMOR_LEGS.includes(item)
-                || EnchantmentTarget.ARMOR_TORSO.includes(item) || EnchantmentTarget.ARMOR_HEAD.includes(item)) {
-            return EnchantmentTarget.ARMOR;
-        } else {
-            return EnchantmentTarget.ALL;
-        }
+        return null;
     }
 
     private void initializeDefaultEnchantments() {
