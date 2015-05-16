@@ -20,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ShiftEnchant extends JavaPlugin implements Listener {
     @Override
@@ -102,7 +103,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         List<String> bookLore;
         int level;
         int cost;
-        int goldCarried = inventory.all(Material.GOLD_INGOT).size();
         try {
             bookName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
             bookLore = item.getItemMeta().getLore();
@@ -115,12 +115,36 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             return;
         }
 
-        if (goldCarried < cost) {
+        Inventory playerInventory = player.getInventory();
+        Set<Integer> goldCarriedSlots = playerInventory.all(Material.GOLD_INGOT).keySet();
+        if (goldCarriedSlots.size() < cost) {
             player.sendMessage(ChatColor.RED + "You don't have enough gold ingots to buy " + ChatColor.BLUE + bookName);
+            player.sendMessage(ChatColor.BLUE + bookName + ChatColor.YELLOW + " costs " + ChatColor.GOLD
+                    + ChatColor.BOLD + cost + ChatColor.YELLOW + " gold and you only have " + ChatColor.GOLD
+                    + ChatColor.BOLD + goldCarriedSlots.size());
             return;
         }
 
+        int goldToTake = cost;
+        for (int slot : goldCarriedSlots) {
+            if (goldToTake <= 0) {
+                break;
+            }
+            ItemStack gold = playerInventory.getItem(slot);
+            if (gold.getAmount() < goldToTake) {
+                gold.setAmount(0);
+                goldToTake -= gold.getAmount();
+            }
+            else {
+                gold.setAmount(gold.getAmount() - goldToTake);
+                goldToTake = 0;
+            }
+            playerInventory.setItem(slot, gold);
+            player.updateInventory();
+        }
+
         player.closeInventory();
+
 
         player.getItemInHand().addEnchantment(Enchantment.getByName(bookName), level);
         player.sendMessage(ChatColor.AQUA + player.getItemInHand().getItemMeta().getDisplayName() + " enchanted with "
