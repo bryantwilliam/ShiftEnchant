@@ -46,23 +46,20 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             }
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
-            EnchantmentTarget enchantmentTarget = getEnchantmentTarget(item);
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop");
-            openGui(player, enchantmentTarget);
+            openGui(player, getPossibleEnchantmentTargets(item));
             return true;
         }
         return false;
     }
 
-    private void openGui(Player player, EnchantmentTarget enchantmentTarget) {
+    private void openGui(Player player, List<EnchantmentTarget> possibleEnchantmentTargets) {
         Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
                 + "Enchantment Shop");
         int slot = 0;
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
-            System.out.println("DEBUG1, 1: " + enchantmentTarget.name());
-            System.out.println("DEBUG1, 2: " + enchantment.getItemTarget());
-            if (enchantment.getItemTarget() != null && (enchantment.getItemTarget().equals(enchantmentTarget))) {
+            if (enchantment.getItemTarget() != null && (possibleEnchantmentTargets.contains(enchantment.getItemTarget()))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
@@ -155,17 +152,15 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 + ChatColor.AQUA + " gold");
     }
 
-    private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
-        EnchantmentTarget[] enchTargets = {EnchantmentTarget.BOW, EnchantmentTarget.ARMOR_FEET,
-                EnchantmentTarget.ARMOR_LEGS, EnchantmentTarget.ARMOR_TORSO, EnchantmentTarget.ARMOR_HEAD,
-                EnchantmentTarget.FISHING_ROD, EnchantmentTarget.WEAPON, EnchantmentTarget.ARMOR,
-                EnchantmentTarget.TOOL};
-        for (EnchantmentTarget enchantmentTarget : enchTargets) {
+    private List<EnchantmentTarget> getPossibleEnchantmentTargets(ItemStack item) {
+        List<EnchantmentTarget> possibleEnchantments = new ArrayList<>();
+        for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
             if (enchantmentTarget.includes(item)) {
-                return enchantmentTarget;
+                possibleEnchantments.add(enchantmentTarget);
             }
         }
-        return EnchantmentTarget.ALL;
+        possibleEnchantments.add(EnchantmentTarget.ALL);
+        return possibleEnchantments;
     }
 
     private void initializeDefaultEnchantments() {
