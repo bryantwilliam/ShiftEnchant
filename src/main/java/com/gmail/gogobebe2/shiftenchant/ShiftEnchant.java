@@ -47,7 +47,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
             EnchantmentTarget enchantmentTarget = getEnchantmentTarget(item);
-            if (enchantmentTarget == null || enchantmentTarget.equals(EnchantmentTarget.ALL)) {
+            if (enchantmentTarget == null) {
                 player.sendMessage(ChatColor.RED + "Error! That item is not enchantable!");
                 return true;
             }
@@ -64,7 +64,13 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         int slot = 0;
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
-            if (enchantment != null && enchantment.getItemTarget() != null && enchantment.getItemTarget().equals(enchantmentTarget)) {
+            boolean isArmour = enchantmentTarget.equals(EnchantmentTarget.ARMOR_FEET)
+                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_LEGS)
+                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_TORSO)
+                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_HEAD);
+            if (enchantment != null && enchantment.getItemTarget() != null
+                    && (enchantment.getItemTarget().equals(enchantmentTarget)
+                    || enchantment.getItemTarget().equals(EnchantmentTarget.ALL) || isArmour)) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
@@ -140,7 +146,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             if (gold.getAmount() < goldToTake) {
                 gold.setAmount(0);
                 goldToTake -= gold.getAmount();
-            } else {
+            }
+            else {
                 gold.setAmount(gold.getAmount() - goldToTake);
                 goldToTake = 0;
             }
@@ -159,8 +166,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
         for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
-            if (enchantmentTarget.includes(item)) {
-                return enchantmentTarget;
+            if (!(enchantmentTarget.equals(EnchantmentTarget.ALL) || enchantmentTarget.equals(EnchantmentTarget.ARMOR))) {
+                if (enchantmentTarget.includes(item)) {
+                    return enchantmentTarget;
+                }
             }
         }
         return null;
