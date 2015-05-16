@@ -123,31 +123,18 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
         EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) item.getItemMeta();
 
-        String bookName;
-        List<String> bookLore;
+
+        List<String> bookLore = bookMeta.getLore();
 
         List<Enchantment> enchantments = new ArrayList<>();
         for (Enchantment enchantment : bookMeta.getStoredEnchants().keySet()) {
             enchantments.add(enchantment);
         }
-        if (enchantments.size() == 0) {
-            player.sendMessage(ChatColor.RED + "An error occurred! That item isn't supposed to be in the gui!");
-            return;
-        }
 
-        int level;
-        int cost;
-        try {
-            bookName = ChatColor.stripColor(bookMeta.getDisplayName());
-            bookLore = bookMeta.getLore();
-            //noinspection ConstantConditions
-            level = bookMeta.getStoredEnchantLevel(enchantments.get(0));
-            //noinspection ConstantConditions
-            cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)));
-        } catch (NullPointerException | NumberFormatException exc) {
-            player.sendMessage(ChatColor.RED + "An error occurred! That item isn't supposed to be in the gui!");
-            return;
-        }
+        String bookName = ChatColor.stripColor(bookMeta.getDisplayName());
+        Enchantment enchantment = enchantments.get(0);
+        int level = bookMeta.getStoredEnchantLevel(enchantments.get(0));
+        int cost = getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold");
 
         Inventory playerInventory = player.getInventory();
         Set<Integer> goldCarriedSlots = playerInventory.all(Material.GOLD_INGOT).keySet();
