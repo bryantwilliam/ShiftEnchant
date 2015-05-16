@@ -81,14 +81,16 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
         if (!ChatColor.stripColor(inventory.getName()).equals("Enchantment Shop")) {
             return;
         }
-        event.getPlayer().sendMessage(ChatColor.DARK_PURPLE + "Closing enchantment shop...");
+        event.getPlayer().sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "Closing enchantment shop...");
     }
+
     @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClick(InventoryClickEvent event) {
