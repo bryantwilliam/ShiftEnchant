@@ -25,6 +25,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getLogger().info("Starting up ShiftEnchant. If you need me to update this plugin, email at gogobebe2@gmail.com");
+        Bukkit.getPluginManager().registerEvents(this, this);
         initializeDefaultEnchantments();
         this.getConfig().options().copyDefaults(true);
         saveConfig();
@@ -86,12 +87,11 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        if (!inventory.getName().equals(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
-                + "Enchantment Shop")) {
+        if (!ChatColor.stripColor(inventory.getName()).equals("Enchantment Shop")) {
             return;
         }
-        Player player = (Player) event.getWhoClicked();
         event.setCancelled(true);
+        Player player = (Player) event.getWhoClicked();
 
         ItemStack item = event.getCurrentItem();
         if (item == null || item.getType().equals(Material.AIR) || !item.hasItemMeta()
