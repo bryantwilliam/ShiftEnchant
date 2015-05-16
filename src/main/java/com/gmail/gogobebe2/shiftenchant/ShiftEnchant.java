@@ -117,11 +117,17 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
         Inventory playerInventory = player.getInventory();
         Set<Integer> goldCarriedSlots = playerInventory.all(Material.GOLD_INGOT).keySet();
-        if (goldCarriedSlots.size() < cost) {
+        int goldQuantity = 0;
+        for (int slot : goldCarriedSlots) {
+            ItemStack gold = playerInventory.getItem(slot);
+            goldQuantity += gold.getAmount();
+        }
+
+        if (goldQuantity < cost) {
             player.sendMessage(ChatColor.RED + "You don't have enough gold ingots to buy " + ChatColor.BLUE + bookName);
             player.sendMessage(ChatColor.BLUE + bookName + ChatColor.YELLOW + " costs " + ChatColor.GOLD
                     + ChatColor.BOLD + cost + ChatColor.YELLOW + " gold and you only have " + ChatColor.GOLD
-                    + ChatColor.BOLD + goldCarriedSlots.size());
+                    + ChatColor.BOLD + goldQuantity);
             return;
         }
 
