@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -66,12 +66,24 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             if (enchantment != null && (possibleEnchantments.contains(enchantment))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                    ItemMeta bookMeta = book.getItemMeta();
+                    EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
+                    try {
+                        bookMeta.addStoredEnchant(enchantment, Integer.parseInt(level), false);
+                    }
+                    catch (NumberFormatException exc) {
+                        player.sendMessage(ChatColor.RED + "Something went wrong in the config. " + level
+                                + " is not a number");
+                        return;
+                    }
 
-                    bookMeta.setDisplayName(ChatColor.AQUA + enchantment.getName());
-                    List<String> bookLore = new ArrayList<>();
-                    bookLore.add(ChatColor.AQUA + "Level: " + ChatColor.BLUE + ChatColor.BOLD + level);
-                    bookLore.add(ChatColor.GOLD + "" + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold"));
+                    List<String> bookLore;
+                    if (!bookMeta.hasLore()) {
+                         bookLore = new ArrayList<>();
+                    }
+                    else {
+                        bookLore = bookMeta.getLore();
+                    }
+                    bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
                     bookMeta.setLore(bookLore);
                     book.setItemMeta(bookMeta);
 
@@ -109,15 +121,27 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 || !item.getType().equals(Material.ENCHANTED_BOOK)) {
             return;
         }
+        EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) item.getItemMeta();
+
         String bookName;
         List<String> bookLore;
+
+        List<Enchantment> enchantments = new ArrayList<>();
+        for (Enchantment enchantment : bookMeta.getStoredEnchants().keySet()) {
+            enchantments.add(enchantment);
+        }
+        if (enchantments.size() == 0) {
+            player.sendMessage(ChatColor.RED + "An error occurred! That item isn't supposed to be in the gui!");
+            return;
+        }
+
         int level;
         int cost;
         try {
-            bookName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
-            bookLore = item.getItemMeta().getLore();
+            bookName = ChatColor.stripColor(bookMeta.getDisplayName());
+            bookLore = bookMeta.getLore();
             //noinspection ConstantConditions
-            level = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)).replace("Level: ", ""));
+            level = bookMeta.getStoredEnchantLevel(enchantments.get(0));
             //noinspection ConstantConditions
             cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(1)));
         } catch (NullPointerException | NumberFormatException exc) {
@@ -159,8 +183,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
 
         player.closeInventory();
-
-        player.getItemInHand().addEnchantment(Enchantment.getByName(bookName), level);
+        player.getItemInHand().addEnchantment(enchantments.get(0), level);
         player.sendMessage(ChatColor.DARK_PURPLE + player.getItemInHand().getType().name() + ChatColor.AQUA + " enchanted with "
                 + ChatColor.BLUE + bookName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
                 + ChatColor.AQUA + " gold");
@@ -169,6 +192,13 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     private List<Enchantment> getPossibleEnchantments(Material material) {
         List<Enchantment> possibleEnchantments = new ArrayList<>();
         for (Enchantment enchantment : Enchantment.values()) {
+            if (enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.OXYGEN)
+                    || enchantment.equals(Enchantment.PROTECTION_FALL)
+                    || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)
+                    || enchantment.equals(Enchantment.LOOT_BONUS_MOBS)
+                    || enchantment.equals(Enchantment.LURE)) {
+                continue;
+            }
             try {
                 if (enchantment.getItemTarget().includes(material)) {
                     possibleEnchantments.add(enchantment);
@@ -178,12 +208,15 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 possibleEnchantments.add(enchantment);
             }
         }
+/*        if (material.equals(Material.BOW)) {
+            possibleEnchantments.add(Enchantment.ARROW_INFINITE);
+        }*/
         return possibleEnchantments;
     }
 
     private void initializeDefaultEnchantments() {
         for (Enchantment enchantment : Enchantment.values()) {
-            for (int level = enchantment.getStartLevel(); level < enchantment.getMaxLevel(); level++) {
+            for (int level = enchantment.getStartLevel(); level <= enchantment.getMaxLevel(); level++) {
                 getConfig().addDefault("enchantments." + enchantment.getName() + ".level." + level + ".gold", 5);
             }
         }
