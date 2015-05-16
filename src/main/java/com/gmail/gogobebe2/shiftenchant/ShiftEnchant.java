@@ -169,7 +169,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     private List<Enchantment> getPossibleEnchantments(Material material) {
         List<Enchantment> possibleEnchantments = new ArrayList<>();
         for (Enchantment enchantment : Enchantment.values()) {
-            if (enchantment.getItemTarget().includes(material)) {
+            if (enchantment != null && enchantment.getItemTarget().includes(material)) {
                 possibleEnchantments.add(enchantment);
             }
         }
