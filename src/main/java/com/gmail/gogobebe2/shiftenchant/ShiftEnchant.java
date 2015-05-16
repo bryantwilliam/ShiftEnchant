@@ -57,14 +57,14 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     private void openGui(Player player, EnchantmentTarget enchantmentTarget) {
-        Inventory inventory = Bukkit.createInventory(null, 9, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
+        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
                 + "Enchantment Shop");
         int slot = 0;
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
-            if (enchantment.getItemTarget().equals(enchantmentTarget)) {
+            if (enchantment != null && enchantment.getItemTarget() != null && enchantment.getItemTarget().equals(enchantmentTarget)) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
-                    ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
+                    ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
 
                     bookMeta.setDisplayName(ChatColor.AQUA + enchantment.getName());
@@ -72,11 +72,11 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     bookLore.add(ChatColor.AQUA + "Level: " + ChatColor.BLUE + ChatColor.BOLD + level);
                     bookLore.add(ChatColor.GOLD + "" + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold"));
                     bookMeta.setLore(bookLore);
-
                     book.setItemMeta(bookMeta);
-                    inventory.setItem(slot, book);
-                    slot++;
+
+                    inventory.setItem(slot++, book);
                 }
+
             }
         }
         player.openInventory(inventory);
@@ -110,8 +110,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             level = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)).replace("Level: ", " "));
             //noinspection ConstantConditions
             cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(1)));
-        }
-        catch (NullPointerException | NumberFormatException exc) {
+        } catch (NullPointerException | NumberFormatException exc) {
             player.sendMessage(ChatColor.RED + "An error occurred! That item isn't supposed to be in the gui!");
             return;
         }
