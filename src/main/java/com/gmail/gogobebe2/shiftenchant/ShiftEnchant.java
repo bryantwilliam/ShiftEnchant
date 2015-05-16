@@ -201,10 +201,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     private boolean isBlacklistedEnchantment(Enchantment enchantment) {
-        return enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.OXYGEN)
-                || enchantment.equals(Enchantment.PROTECTION_FALL)
-                || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)
-                || enchantment.equals(Enchantment.LOOT_BONUS_MOBS)
-                || enchantment.equals(Enchantment.LURE);
+        return enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.DAMAGE_UNDEAD)
+                || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)|| enchantment.equals(Enchantment.LURE)
+                || enchantment.equals(Enchantment.PROTECTION_FALL)|| enchantment.equals(Enchantment.OXYGEN)
+                || enchantment.equals(Enchantment.LOOT_BONUS_MOBS);
     }
 }
