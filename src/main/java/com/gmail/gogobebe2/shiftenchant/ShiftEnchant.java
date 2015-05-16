@@ -131,9 +131,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             enchantments.add(enchantment);
         }
 
-        String bookName = ChatColor.stripColor(bookMeta.getDisplayName());
         Enchantment enchantment = enchantments.get(0);
-        int level = bookMeta.getStoredEnchantLevel(enchantments.get(0));
+        String enchantmentName = enchantment.getName();
+        int level = bookMeta.getStoredEnchantLevel(enchantment);
         int cost = getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold");
 
         Inventory playerInventory = player.getInventory();
@@ -145,8 +145,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
 
         if (goldQuantity < cost) {
-            player.sendMessage(ChatColor.RED + "You don't have enough gold ingots to buy " + ChatColor.BLUE + bookName);
-            player.sendMessage(ChatColor.BLUE + bookName + ChatColor.YELLOW + " costs " + ChatColor.GOLD
+            player.sendMessage(ChatColor.RED + "You don't have enough gold ingots to buy " + ChatColor.BLUE + enchantmentName);
+            player.sendMessage(ChatColor.BLUE + enchantmentName + ChatColor.YELLOW + " costs " + ChatColor.GOLD
                     + ChatColor.BOLD + cost + ChatColor.YELLOW + " gold and you only have " + ChatColor.GOLD
                     + ChatColor.BOLD + goldQuantity);
             return;
@@ -168,10 +168,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             playerInventory.setItem(slot, gold);
         }
         player.closeInventory();
-        player.getItemInHand().addEnchantment(enchantments.get(0), level);
+        player.getItemInHand().addEnchantment(enchantment, level);
         player.updateInventory();
         player.sendMessage(ChatColor.DARK_PURPLE + player.getItemInHand().getType().name() + ChatColor.AQUA + " enchanted with "
-                + ChatColor.BLUE + bookName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
+                + ChatColor.BLUE + enchantmentName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
                 + ChatColor.AQUA + " gold");
     }
 
