@@ -47,7 +47,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
             EnchantmentTarget enchantmentTarget = getEnchantmentTarget(item);
-            if (enchantmentTarget == null) {
+            if (enchantmentTarget == null || enchantmentTarget.equals(EnchantmentTarget.ALL)) {
                 player.sendMessage(ChatColor.RED + "Error! That item is not enchantable!");
                 return true;
             }
