@@ -69,8 +69,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     || enchantmentTarget.equals(EnchantmentTarget.ARMOR_TORSO)
                     || enchantmentTarget.equals(EnchantmentTarget.ARMOR_HEAD);
             if (enchantment != null && enchantment.getItemTarget() != null
-                    && (enchantment.getItemTarget().equals(enchantmentTarget)
-                    || enchantment.getItemTarget().equals(EnchantmentTarget.ALL) || isArmour)) {
+                    && (enchantment.getItemTarget().equals(enchantmentTarget) || isArmour
+                    || enchantmentTarget.equals(EnchantmentTarget.ALL))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
