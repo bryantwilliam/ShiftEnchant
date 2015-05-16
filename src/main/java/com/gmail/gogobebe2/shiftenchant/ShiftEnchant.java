@@ -46,6 +46,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             }
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
+            if (item == null || item.getType().equals(Material.AIR)) {
+                player.sendMessage(ChatColor.RED + "You aren't holding an item in your hand!");
+                return true;
+            }
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop...");
             openGui(player, getPossibleEnchantments(item.getType()));
             return true;
