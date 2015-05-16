@@ -156,12 +156,16 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     private EnchantmentTarget getEnchantmentTarget(ItemStack item) {
-        for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
+        EnchantmentTarget[] enchTargets = {EnchantmentTarget.BOW, EnchantmentTarget.ARMOR_FEET,
+                EnchantmentTarget.ARMOR_LEGS, EnchantmentTarget.ARMOR_TORSO, EnchantmentTarget.ARMOR_HEAD,
+                EnchantmentTarget.FISHING_ROD, EnchantmentTarget.WEAPON, EnchantmentTarget.ARMOR,
+                EnchantmentTarget.TOOL};
+        for (EnchantmentTarget enchantmentTarget : enchTargets) {
             if (enchantmentTarget.includes(item)) {
                 return enchantmentTarget;
             }
         }
-        return null;
+        return EnchantmentTarget.ALL;
     }
 
     private void initializeDefaultEnchantments() {
