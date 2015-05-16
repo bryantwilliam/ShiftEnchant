@@ -47,10 +47,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
             EnchantmentTarget enchantmentTarget = getEnchantmentTarget(item);
-            if (enchantmentTarget == null) {
-                player.sendMessage(ChatColor.RED + "Error! That item is not enchantable!");
-                return true;
-            }
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop");
             openGui(player, enchantmentTarget);
             return true;
@@ -64,13 +60,11 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         int slot = 0;
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
-            boolean isArmour = enchantmentTarget.equals(EnchantmentTarget.ARMOR_FEET)
-                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_LEGS)
-                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_TORSO)
-                    || enchantmentTarget.equals(EnchantmentTarget.ARMOR_HEAD);
-            if (enchantment != null && enchantment.getItemTarget() != null
-                    && (enchantment.getItemTarget().equals(enchantmentTarget) || isArmour
-                    || enchantmentTarget.equals(EnchantmentTarget.ALL))) {
+            System.out.println("DEBUG1, 1: " + enchantmentTarget.name());
+            System.out.println("DEBUG1, 2: " + enchantment.getItemTarget());
+            if (enchantment.getItemTarget() != null && (enchantment.getItemTarget().equals(enchantmentTarget)
+                    || enchantment.getItemTarget().equals(EnchantmentTarget.ARMOR)
+                    || enchantment.getItemTarget().equals(EnchantmentTarget.ALL))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
@@ -146,8 +140,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             if (gold.getAmount() < goldToTake) {
                 gold.setAmount(0);
                 goldToTake -= gold.getAmount();
-            }
-            else {
+            } else {
                 gold.setAmount(gold.getAmount() - goldToTake);
                 goldToTake = 0;
             }
@@ -172,7 +165,12 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 }
             }
         }
-        return null;
+        if (EnchantmentTarget.ARMOR_FEET.includes(item) || EnchantmentTarget.ARMOR_LEGS.includes(item)
+                || EnchantmentTarget.ARMOR_TORSO.includes(item) || EnchantmentTarget.ARMOR_HEAD.includes(item)) {
+            return EnchantmentTarget.ARMOR;
+        } else {
+            return EnchantmentTarget.ALL;
+        }
     }
 
     private void initializeDefaultEnchantments() {
