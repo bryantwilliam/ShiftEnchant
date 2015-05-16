@@ -47,7 +47,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop");
-            openGui(player, getPossibleEnchantmentTargets(item));
+            openGui(player, getPossibleEnchantmentTargets(item.getType()));
             return true;
         }
         return false;
@@ -152,14 +152,13 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 + ChatColor.AQUA + " gold");
     }
 
-    private List<EnchantmentTarget> getPossibleEnchantmentTargets(ItemStack item) {
+    private List<EnchantmentTarget> getPossibleEnchantmentTargets(Material material) {
         List<EnchantmentTarget> possibleEnchantments = new ArrayList<>();
         for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
-            if (enchantmentTarget.includes(item)) {
+            if (enchantmentTarget.includes(material)) {
                 possibleEnchantments.add(enchantmentTarget);
             }
         }
-        possibleEnchantments.add(EnchantmentTarget.ALL);
         return possibleEnchantments;
     }
 
