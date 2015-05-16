@@ -107,7 +107,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             bookName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
             bookLore = item.getItemMeta().getLore();
             //noinspection ConstantConditions
-            level = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)).replace("Level: ", " "));
+            level = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)).replace("Level: ", ""));
             //noinspection ConstantConditions
             cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(1)));
         } catch (NullPointerException | NumberFormatException exc) {
