@@ -1,5 +1,5 @@
 name: ShiftEnchant
-version: 1.0.3-PREALPHA-SNAPSHOT
+version: 1.0.4-PREALPHA-SNAPSHOT
 main: com.gmail.gogobebe2.shiftenchant.ShiftEnchant
 description: implements a gui that pops up to enchant items.
 author: William Bryant (gogobebe2)

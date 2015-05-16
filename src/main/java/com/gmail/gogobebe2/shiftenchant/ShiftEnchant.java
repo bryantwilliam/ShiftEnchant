@@ -192,13 +192,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     private List<Enchantment> getPossibleEnchantments(Material material) {
         List<Enchantment> possibleEnchantments = new ArrayList<>();
         for (Enchantment enchantment : Enchantment.values()) {
-            if (enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.OXYGEN)
-                    || enchantment.equals(Enchantment.PROTECTION_FALL)
-                    || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)
-                    || enchantment.equals(Enchantment.LOOT_BONUS_MOBS)
-                    || enchantment.equals(Enchantment.LURE)) {
-                continue;
-            }
+            if (isBlacklistedEnchantment(enchantment)) continue;
             try {
                 if (enchantment.getItemTarget().includes(material)) {
                     possibleEnchantments.add(enchantment);
@@ -216,9 +210,18 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
     private void initializeDefaultEnchantments() {
         for (Enchantment enchantment : Enchantment.values()) {
+            if (isBlacklistedEnchantment(enchantment)) continue;
             for (int level = enchantment.getStartLevel(); level <= enchantment.getMaxLevel(); level++) {
                 getConfig().addDefault("enchantments." + enchantment.getName() + ".level." + level + ".gold", 5);
             }
         }
+    }
+
+    private boolean isBlacklistedEnchantment(Enchantment enchantment) {
+        return enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.OXYGEN)
+                || enchantment.equals(Enchantment.PROTECTION_FALL)
+                || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)
+                || enchantment.equals(Enchantment.LOOT_BONUS_MOBS)
+                || enchantment.equals(Enchantment.LURE);
     }
 }
