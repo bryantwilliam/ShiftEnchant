@@ -143,7 +143,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             //noinspection ConstantConditions
             level = bookMeta.getStoredEnchantLevel(enchantments.get(0));
             //noinspection ConstantConditions
-            cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(1)));
+            cost = Integer.parseInt(ChatColor.stripColor(bookLore.get(0)));
         } catch (NullPointerException | NumberFormatException exc) {
             player.sendMessage(ChatColor.RED + "An error occurred! That item isn't supposed to be in the gui!");
             return;
@@ -179,11 +179,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 goldToTake = 0;
             }
             playerInventory.setItem(slot, gold);
-            player.updateInventory();
         }
-
         player.closeInventory();
         player.getItemInHand().addEnchantment(enchantments.get(0), level);
+        player.updateInventory();
         player.sendMessage(ChatColor.DARK_PURPLE + player.getItemInHand().getType().name() + ChatColor.AQUA + " enchanted with "
                 + ChatColor.BLUE + bookName + ChatColor.AQUA + " for " + ChatColor.GOLD + ChatColor.BOLD + cost
                 + ChatColor.AQUA + " gold");
@@ -202,9 +201,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 possibleEnchantments.add(enchantment);
             }
         }
-/*        if (material.equals(Material.BOW)) {
-            possibleEnchantments.add(Enchantment.ARROW_INFINITE);
-        }*/
         return possibleEnchantments;
     }
 
