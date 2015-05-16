@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,19 +47,19 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             ItemStack item = player.getItemInHand();
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop...");
-            openGui(player, getPossibleEnchantmentTargets(item.getType()));
+            openGui(player, getPossibleEnchantments(item.getType()));
             return true;
         }
         return false;
     }
 
-    private void openGui(Player player, List<EnchantmentTarget> possibleEnchantmentTargets) {
+    private void openGui(Player player, List<Enchantment> possibleEnchantments) {
         Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
                 + "Enchantment Shop");
         int slot = 0;
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
-            if (enchantment.getItemTarget() != null && (possibleEnchantmentTargets.contains(enchantment.getItemTarget()))) {
+            if (enchantment != null && (possibleEnchantments.contains(enchantment))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
                     ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     ItemMeta bookMeta = book.getItemMeta();
@@ -163,11 +162,11 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 + ChatColor.AQUA + " gold");
     }
 
-    private List<EnchantmentTarget> getPossibleEnchantmentTargets(Material material) {
-        List<EnchantmentTarget> possibleEnchantments = new ArrayList<>();
-        for (EnchantmentTarget enchantmentTarget : EnchantmentTarget.values()) {
-            if (enchantmentTarget.includes(material)) {
-                possibleEnchantments.add(enchantmentTarget);
+    private List<Enchantment> getPossibleEnchantments(Material material) {
+        List<Enchantment> possibleEnchantments = new ArrayList<>();
+        for (Enchantment enchantment : Enchantment.values()) {
+            if (enchantment.getItemTarget().includes(material)) {
+                possibleEnchantments.add(enchantment);
             }
         }
         return possibleEnchantments;
