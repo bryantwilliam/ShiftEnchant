@@ -103,7 +103,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + ChatColor.ITALIC + "Owned");
         }
         else {
-            itemMeta.setDisplayName(ChatColor.GREEN + "" + ChatColor.GOLD + "Buy");
+            itemMeta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Buy");
         }
         itemMeta.addEnchant(enchantment, level, false);
         if (itemMeta.hasLore()) {
