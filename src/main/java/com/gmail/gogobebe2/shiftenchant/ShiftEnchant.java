@@ -70,11 +70,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     ItemStack book;
                     if (item.getEnchantments() != null && item.getEnchantments().keySet().contains(enchantment)) {
                         book = new ItemStack(Material.BARRIER, 1);
-                    }
-                    else {
+                    } else {
                         book = new ItemStack(Material.ENCHANTED_BOOK, 1);
                     }
-
                     EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
                     try {
                         bookMeta.addStoredEnchant(enchantment, Integer.parseInt(level), false);
@@ -93,9 +91,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
                     bookMeta.setLore(bookLore);
                     book.setItemMeta(bookMeta);
+
                     inventory.setItem(slot++, book);
                 }
-
             }
         }
         player.openInventory(inventory);
@@ -179,15 +177,15 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         ItemStack item = event.getCurrentItem();
-        if (item == null || item.getType().equals(Material.AIR) || !item.hasItemMeta()
-                || !item.getType().equals(Material.ENCHANTED_BOOK) || !item.getType().equals(Material.BARRIER)) {
+        if (item == null) {
+            return;
+        } else if (item.getType().equals(Material.AIR) || !item.hasItemMeta() || !item.getType().equals(Material.ENCHANTED_BOOK)) {
+            if (item.getType().equals(Material.BARRIER)) {
+                player.sendMessage(ChatColor.RED + "You already have this enchantment on silly!");
+            }
             return;
         }
 
-        if (item.getType().equals(Material.BARRIER)) {
-            player.sendMessage(ChatColor.RED + "You already have this enchantment on silly!");
-            return;
-        }
         EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) item.getItemMeta();
 
 
@@ -249,11 +247,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             try {
                 if (enchantment.getItemTarget().includes(material)) {
                     possibleEnchantments.add(enchantment);
-                }
-                else if (enchantment.equals(Enchantment.THORNS) && isArmour(material)) {
+                } else if (enchantment.equals(Enchantment.THORNS) && isArmour(material)) {
                     possibleEnchantments.add(enchantment);
-                }
-                else if (enchantment.equals(Enchantment.DAMAGE_ALL) && isAxe(material)) {
+                } else if (enchantment.equals(Enchantment.DAMAGE_ALL) && isAxe(material)) {
                     possibleEnchantments.add(enchantment);
                 }
             } catch (NullPointerException exc) {
