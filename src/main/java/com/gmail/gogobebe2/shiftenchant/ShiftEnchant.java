@@ -78,7 +78,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     }
 
                     ItemStack book;
-                    if (item.getEnchantments().keySet().contains(enchantment)) {
+                    if (item.getEnchantments().keySet().contains(enchantment) && item.getEnchantments().get(enchantment) == level) {
                         book = new ItemStack(Material.BARRIER, 1);
                     }
                     else {
@@ -100,23 +100,34 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
             bookMeta.addStoredEnchant(enchantment, level, false);
             book.setItemMeta(bookMeta);
+
+            List<String> bookLore;
+            if (!bookMeta.hasLore()) {
+                bookLore = new ArrayList<>();
+            } else {
+                bookLore = bookMeta.getLore();
+            }
+
+            bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
+            bookMeta.setLore(bookLore);
+            book.setItemMeta(bookMeta);
+            return book;
         }
         else {
-            book.addEnchantment(enchantment, level);
-            itemMeta.setDisplayName(ChatColor.YELLOW + "Enchanted Book");
-        }
+            itemMeta.setDisplayName(ChatColor.YELLOW + "Owned");
 
-        List<String> bookLore;
-        if (!itemMeta.hasLore()) {
-            bookLore = new ArrayList<>();
-        } else {
-            bookLore = itemMeta.getLore();
-        }
+            List<String> bookLore;
+            if (!itemMeta.hasLore()) {
+                bookLore = new ArrayList<>();
+            } else {
+                bookLore = itemMeta.getLore();
+            }
 
-        bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
-        itemMeta.setLore(bookLore);
-        book.setItemMeta(itemMeta);
-        return book;
+            bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
+            itemMeta.setLore(bookLore);
+            book.setItemMeta(itemMeta);
+            return book;
+        }
     }
 
     @SuppressWarnings("unused")
