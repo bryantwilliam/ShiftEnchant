@@ -100,7 +100,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.";
         List<String> bookLore = new ArrayList<>();
         if (book.getType().equals(Material.BARRIER)) {
-            itemMeta.setDisplayName(ChatColor.YELLOW + "Owned");
+            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + ChatColor.ITALIC + "Owned");
+        }
+        else {
+            itemMeta.setDisplayName(ChatColor.GREEN + "" + ChatColor.GOLD + "Buy");
         }
         itemMeta.addEnchant(enchantment, level, false);
         if (itemMeta.hasLore()) {
