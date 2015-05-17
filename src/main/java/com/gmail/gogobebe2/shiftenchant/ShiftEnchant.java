@@ -70,8 +70,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
                     try {
                         bookMeta.addStoredEnchant(enchantment, Integer.parseInt(level), false);
-                    }
-                    catch (NumberFormatException exc) {
+                    } catch (NumberFormatException exc) {
                         player.sendMessage(ChatColor.RED + "Something went wrong in the config. " + level
                                 + " is not a number");
                         return;
@@ -79,9 +78,8 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
                     List<String> bookLore;
                     if (!bookMeta.hasLore()) {
-                         bookLore = new ArrayList<>();
-                    }
-                    else {
+                        bookLore = new ArrayList<>();
+                    } else {
                         bookLore = bookMeta.getLore();
                     }
                     bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
@@ -104,10 +102,16 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 || !(event.getEntity() instanceof Player)) {
             return;
         }
+
         Player damager = (Player) event.getDamager();
         Player damaged = (Player) event.getEntity();
+
+        event.setCancelled(true);
+        damaged.damage(event.getFinalDamage());
+
         double base;
         ItemStack axe = damager.getItemInHand();
+
         switch (axe.getType()) {
             case WOOD_AXE:
                 base = 2;
@@ -128,17 +132,19 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 return;
 
         }
+        int enchLevel = 0;
         if (axe.getEnchantments().size() > 0) {
             if (axe.getEnchantments().containsKey(Enchantment.DAMAGE_ALL)) {
-                base = base + (1 + (axe.getEnchantments().get(Enchantment.DAMAGE_ALL) * 0.5));
+                enchLevel = axe.getEnchantments().get(Enchantment.DAMAGE_ALL);
             }
         }
+        base += ((enchLevel) * 1.5);
         ItemStack[] armourContents = damaged.getInventory().getArmorContents();
         if (armourContents == null || armourContents.length == 0) {
             return;
         }
         for (ItemStack armour : armourContents) {
-            double finalDurability = armour.getDurability() - base;
+            double finalDurability = armour.getDurability() + base;
             armour.setDurability((short) finalDurability);
         }
         damaged.getInventory().setArmorContents(armourContents);
@@ -232,8 +238,13 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 if (enchantment.getItemTarget().includes(material)) {
                     possibleEnchantments.add(enchantment);
                 }
-            }
-            catch (NullPointerException exc) {
+                else if (enchantment.equals(Enchantment.THORNS) && isArmour(material)) {
+                    possibleEnchantments.add(enchantment);
+                }
+                else if (enchantment.equals(Enchantment.DAMAGE_ALL) && isAxe(material)) {
+                    possibleEnchantments.add(enchantment);
+                }
+            } catch (NullPointerException exc) {
                 possibleEnchantments.add(enchantment);
             }
         }
@@ -249,10 +260,32 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
     }
 
+    private boolean isAxe(Material material) {
+        return material.equals(Material.WOOD_AXE) || material.equals(Material.STONE_AXE)
+                || material.equals(Material.IRON_AXE) || material.equals(Material.GOLD_AXE)
+                || material.equals(Material.DIAMOND_AXE);
+    }
+
+    private boolean isArmour(Material material) {
+        return material.equals(Material.IRON_HELMET) || material.equals(Material.GOLD_HELMET)
+                || material.equals(Material.LEATHER_HELMET) || material.equals(Material.CHAINMAIL_HELMET)
+                || material.equals(Material.DIAMOND_HELMET)
+                || material.equals(Material.IRON_CHESTPLATE) || material.equals(Material.GOLD_CHESTPLATE)
+                || material.equals(Material.LEATHER_CHESTPLATE) || material.equals(Material.CHAINMAIL_CHESTPLATE)
+                || material.equals(Material.DIAMOND_CHESTPLATE)
+                || material.equals(Material.IRON_LEGGINGS) || material.equals(Material.GOLD_LEGGINGS)
+                || material.equals(Material.LEATHER_LEGGINGS) || material.equals(Material.CHAINMAIL_LEGGINGS)
+                || material.equals(Material.DIAMOND_LEGGINGS)
+                || material.equals(Material.IRON_BOOTS) || material.equals(Material.GOLD_BOOTS)
+                || material.equals(Material.LEATHER_BOOTS) || material.equals(Material.CHAINMAIL_BOOTS)
+                || material.equals(Material.DIAMOND_BOOTS);
+    }
+
     private boolean isBlacklistedEnchantment(Enchantment enchantment) {
         return enchantment.equals(Enchantment.DAMAGE_ARTHROPODS) || enchantment.equals(Enchantment.DAMAGE_UNDEAD)
-                || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS)|| enchantment.equals(Enchantment.LURE)
-                || enchantment.equals(Enchantment.PROTECTION_FALL)|| enchantment.equals(Enchantment.OXYGEN)
-                || enchantment.equals(Enchantment.LOOT_BONUS_MOBS);
+                || enchantment.equals(Enchantment.PROTECTION_EXPLOSIONS) || enchantment.equals(Enchantment.LURE)
+                || enchantment.equals(Enchantment.PROTECTION_FALL) || enchantment.equals(Enchantment.OXYGEN)
+                || enchantment.equals(Enchantment.LOOT_BONUS_MOBS) || enchantment.equals(Enchantment.SILK_TOUCH)
+                || enchantment.equals(Enchantment.WATER_WORKER) || enchantment.equals(Enchantment.DEPTH_STRIDER);
     }
 }
