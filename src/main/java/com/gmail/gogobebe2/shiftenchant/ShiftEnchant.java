@@ -17,6 +17,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -66,38 +67,55 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         for (String enchantmentName : getConfig().getConfigurationSection("enchantments").getKeys(false)) {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
             if (enchantment != null && (possibleEnchantments.contains(enchantment))) {
-                for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
-                    ItemStack book;
-                    if (item.getEnchantments() != null && item.getEnchantments().keySet().contains(enchantment)) {
-                        book = new ItemStack(Material.BARRIER, 1);
-                    } else {
-                        book = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                    }
-                    EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
+                for (String lvl : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
+                    int level;
                     try {
-                        bookMeta.addStoredEnchant(enchantment, Integer.parseInt(level), false);
+                        level = Integer.parseInt(lvl);
                     } catch (NumberFormatException exc) {
-                        player.sendMessage(ChatColor.RED + "Something went wrong in the config. " + level
+                        player.sendMessage(ChatColor.RED + "Something went wrong in the config. " + lvl
                                 + " is not a number");
                         return;
                     }
 
-                    List<String> bookLore;
-                    if (!bookMeta.hasLore()) {
-                        bookLore = new ArrayList<>();
-                    } else {
-                        bookLore = bookMeta.getLore();
+                    ItemStack book;
+                    if (item.getEnchantments().keySet().contains(enchantment)) {
+                        book = new ItemStack(Material.BARRIER, 1);
                     }
-                    bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
-                    bookMeta.setLore(bookLore);
-                    book.setItemMeta(bookMeta);
+                    else {
+                        book = new ItemStack(Material.ENCHANTED_BOOK, 1);
+                    }
 
-                    inventory.setItem(slot++, book);
+                    inventory.setItem(slot++, getEnchantedBook(book, enchantment, level));
+
                 }
             }
         }
         player.openInventory(inventory);
 
+    }
+
+    private ItemStack getEnchantedBook(ItemStack book, Enchantment enchantment, int level) {
+        ItemMeta itemMeta = book.getItemMeta();
+        if (book.getType().equals(Material.ENCHANTED_BOOK)) {
+            EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
+            bookMeta.addStoredEnchant(enchantment, level, false);
+        }
+        else {
+            book.addEnchantment(enchantment, level);
+            itemMeta.setDisplayName(ChatColor.YELLOW + "Enchanted Book");
+        }
+
+        List<String> bookLore;
+        if (!itemMeta.hasLore()) {
+            bookLore = new ArrayList<>();
+        } else {
+            bookLore = itemMeta.getLore();
+        }
+
+        bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
+        itemMeta.setLore(bookLore);
+        book.setItemMeta(itemMeta);
+        return book;
     }
 
     @SuppressWarnings("unused")
@@ -122,16 +140,16 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 base = 2;
                 break;
             case STONE_AXE:
-                base = 4;
+                base = 5;
                 break;
             case GOLD_AXE:
-                base = 4;
+                base = 5;
                 break;
             case IRON_AXE:
-                base = 7;
+                base = 10;
                 break;
             case DIAMOND_AXE:
-                base = 12;
+                base = 18;
                 break;
             default:
                 return;
