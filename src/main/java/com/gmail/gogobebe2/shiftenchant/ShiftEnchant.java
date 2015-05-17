@@ -52,13 +52,14 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 return true;
             }
             player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "Opening enchantment shop...");
-            openGui(player, getPossibleEnchantments(item.getType()));
+            openGui(player, item);
             return true;
         }
         return false;
     }
 
-    private void openGui(Player player, List<Enchantment> possibleEnchantments) {
+    private void openGui(Player player, ItemStack item) {
+        List<Enchantment> possibleEnchantments = getPossibleEnchantments(item.getType());
         Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD
                 + "Enchantment Shop");
         int slot = 0;
@@ -66,7 +67,14 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             Enchantment enchantment = Enchantment.getByName(enchantmentName);
             if (enchantment != null && (possibleEnchantments.contains(enchantment))) {
                 for (String level : getConfig().getConfigurationSection("enchantments." + enchantmentName + ".level").getKeys(false)) {
-                    ItemStack book = new ItemStack(Material.ENCHANTED_BOOK, 1);
+                    ItemStack book;
+                    if (item.getEnchantments() != null && item.getEnchantments().keySet().contains(enchantment)) {
+                        book = new ItemStack(Material.BARRIER, 1);
+                    }
+                    else {
+                        book = new ItemStack(Material.ENCHANTED_BOOK, 1);
+                    }
+
                     EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
                     try {
                         bookMeta.addStoredEnchant(enchantment, Integer.parseInt(level), false);
@@ -85,7 +93,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                     bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
                     bookMeta.setLore(bookLore);
                     book.setItemMeta(bookMeta);
-
                     inventory.setItem(slot++, book);
                 }
 
@@ -173,7 +180,12 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
         ItemStack item = event.getCurrentItem();
         if (item == null || item.getType().equals(Material.AIR) || !item.hasItemMeta()
-                || !item.getType().equals(Material.ENCHANTED_BOOK)) {
+                || !item.getType().equals(Material.ENCHANTED_BOOK) || !item.getType().equals(Material.BARRIER)) {
+            return;
+        }
+
+        if (item.getType().equals(Material.BARRIER)) {
+            player.sendMessage(ChatColor.RED + "You already have this enchantment on silly!");
             return;
         }
         EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) item.getItemMeta();
