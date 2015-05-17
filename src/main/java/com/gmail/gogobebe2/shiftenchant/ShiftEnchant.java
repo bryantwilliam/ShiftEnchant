@@ -159,7 +159,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
                 enchLevel = axe.getEnchantments().get(Enchantment.DAMAGE_ALL);
             }
         }
-        base += ((enchLevel) * 1.5);
+        base += (enchLevel * 1.5);
         ItemStack[] armourContents = damaged.getInventory().getArmorContents();
         if (armourContents == null || armourContents.length == 0) {
             return;
@@ -168,7 +168,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             double finalDurability = armour.getDurability() + base;
             if (finalDurability >= armour.getType().getMaxDurability()) {
                 armour.setType(Material.AIR);
-                damaged.playSound(damaged.getLocation(), Sound.ITEM_BREAK, 1F, 1F);
+                damaged.playSound(damaged.getLocation(), Sound.ITEM_BREAK, 1.5F, 1.5F);
             }
             else {
                 armour.setDurability((short) finalDurability);
