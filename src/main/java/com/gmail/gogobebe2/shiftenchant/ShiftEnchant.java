@@ -100,34 +100,21 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
             bookMeta.addStoredEnchant(enchantment, level, false);
             book.setItemMeta(bookMeta);
-
-            List<String> bookLore;
-            if (!bookMeta.hasLore()) {
-                bookLore = new ArrayList<>();
-            } else {
-                bookLore = bookMeta.getLore();
-            }
-
-            bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
-            bookMeta.setLore(bookLore);
-            book.setItemMeta(bookMeta);
-            return book;
         }
         else {
             itemMeta.setDisplayName(ChatColor.YELLOW + "Owned");
-
-            List<String> bookLore;
-            if (!itemMeta.hasLore()) {
-                bookLore = new ArrayList<>();
-            } else {
-                bookLore = itemMeta.getLore();
-            }
-
-            bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
-            itemMeta.setLore(bookLore);
-            book.setItemMeta(itemMeta);
-            return book;
         }
+        List<String> bookLore;
+        if (!itemMeta.hasLore()) {
+            bookLore = new ArrayList<>();
+        } else {
+            bookLore = itemMeta.getLore();
+        }
+
+        bookLore.add(ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.");
+        itemMeta.setLore(bookLore);
+        book.setItemMeta(itemMeta);
+        return book;
     }
 
     @SuppressWarnings("unused")
