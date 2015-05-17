@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -94,6 +95,54 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
         player.openInventory(inventory);
 
+    }
+
+    @SuppressWarnings("unused")
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerHit(EntityDamageByEntityEvent event) {
+        if (event.getDamager() == null || event.getEntity() == null || !(event.getDamager() instanceof Player)
+                || !(event.getEntity() instanceof Player)) {
+            return;
+        }
+        Player damager = (Player) event.getDamager();
+        Player damaged = (Player) event.getEntity();
+        double base;
+        ItemStack axe = damager.getItemInHand();
+        switch (axe.getType()) {
+            case WOOD_AXE:
+                base = 2;
+                break;
+            case STONE_AXE:
+                base = 4;
+                break;
+            case GOLD_AXE:
+                base = 4;
+                break;
+            case IRON_AXE:
+                base = 7;
+                break;
+            case DIAMOND_AXE:
+                base = 12;
+                break;
+            default:
+                return;
+
+        }
+        if (axe.getEnchantments().size() > 0) {
+            if (axe.getEnchantments().containsKey(Enchantment.DAMAGE_ALL)) {
+                base = base + (1 + (axe.getEnchantments().get(Enchantment.DAMAGE_ALL) * 0.5));
+            }
+        }
+        ItemStack[] armourContents = damaged.getInventory().getArmorContents();
+        if (armourContents == null || armourContents.length == 0) {
+            return;
+        }
+        for (ItemStack armour : armourContents) {
+            double finalDurability = armour.getDurability() - base;
+            armour.setDurability((short) finalDurability);
+        }
+        damaged.getInventory().setArmorContents(armourContents);
+        damaged.updateInventory();
     }
 
     @SuppressWarnings("unused")
