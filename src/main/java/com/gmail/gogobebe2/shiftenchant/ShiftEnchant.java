@@ -99,6 +99,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         if (book.getType().equals(Material.ENCHANTED_BOOK)) {
             EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
             bookMeta.addStoredEnchant(enchantment, level, false);
+            book.setItemMeta(bookMeta);
         }
         else {
             book.addEnchantment(enchantment, level);
