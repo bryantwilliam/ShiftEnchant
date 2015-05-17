@@ -4,6 +4,7 @@ package com.gmail.gogobebe2.shiftenchant;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -16,7 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -166,7 +166,13 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         }
         for (ItemStack armour : armourContents) {
             double finalDurability = armour.getDurability() + base;
-            armour.setDurability((short) finalDurability);
+            if (finalDurability >= armour.getType().getMaxDurability()) {
+                armour.setType(Material.AIR);
+                damaged.playSound(damaged.getLocation(), Sound.ITEM_BREAK, 1F, 1F);
+            }
+            else {
+                armour.setDurability((short) finalDurability);
+            }
         }
         damaged.getInventory().setArmorContents(armourContents);
         damaged.updateInventory();
@@ -202,19 +208,19 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
             return;
         }
 
-        EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) item.getItemMeta();
+        ItemMeta bookMeta = item.getItemMeta();
 
 
         List<String> bookLore = bookMeta.getLore();
 
         List<Enchantment> enchantments = new ArrayList<>();
-        for (Enchantment enchantment : bookMeta.getStoredEnchants().keySet()) {
+        for (Enchantment enchantment : bookMeta.getEnchants().keySet()) {
             enchantments.add(enchantment);
         }
 
         Enchantment enchantment = enchantments.get(0);
         String enchantmentName = enchantment.getName();
-        int level = bookMeta.getStoredEnchantLevel(enchantment);
+        int level = bookMeta.getEnchantLevel(enchantment);
         int cost = getConfig().getInt("enchantments." + enchantment.getName() + ".level." + level + ".gold");
 
         Inventory playerInventory = player.getInventory();
