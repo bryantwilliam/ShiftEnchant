@@ -99,30 +99,17 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         final String COST_MESSAGE = ChatColor.GOLD + "Cost: " + ChatColor.BOLD + getConfig().getInt("enchantments."
                 + enchantment.getName() + ".level." + level + ".gold") + ChatColor.GOLD + " gold.";
         List<String> bookLore = new ArrayList<>();
-        if (book.getType().equals(Material.ENCHANTED_BOOK)) {
-            EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) book.getItemMeta();
-            bookMeta.addStoredEnchant(enchantment, level, false);
-            book.setItemMeta(bookMeta);
-
-            if (bookMeta.hasLore()) {
-                bookLore = bookMeta.getLore();
-            }
-
-            bookLore.add(COST_MESSAGE);
-            bookMeta.setLore(bookLore);
-            book.setItemMeta(bookMeta);
-        }
-        else {
+        if (book.getType().equals(Material.BARRIER)) {
             itemMeta.setDisplayName(ChatColor.YELLOW + "Owned");
-            itemMeta.addEnchant(enchantment, level, false);
-            if (itemMeta.hasLore()) {
-                bookLore = itemMeta.getLore();
-            }
-
-            bookLore.add(COST_MESSAGE);
-            itemMeta.setLore(bookLore);
-            book.setItemMeta(itemMeta);
         }
+        itemMeta.addEnchant(enchantment, level, false);
+        if (itemMeta.hasLore()) {
+            bookLore = itemMeta.getLore();
+        }
+
+        bookLore.add(COST_MESSAGE);
+        itemMeta.setLore(bookLore);
+        book.setItemMeta(itemMeta);
         return book;
     }
 
