@@ -127,7 +127,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         Player damager = (Player) event.getDamager();
         Player damaged = (Player) event.getEntity();
 
-        event.setCancelled(true);
+        if (event.getFinalDamage() < damaged.getHealth()) {
+            event.setCancelled(true);
+        }
         damaged.damage(event.getFinalDamage());
 
         double base;
