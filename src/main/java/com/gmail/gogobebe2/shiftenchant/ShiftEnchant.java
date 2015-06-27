@@ -9,8 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -117,7 +115,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() == null || event.getEntity() == null || !(event.getDamager() instanceof Player)
                 || !(event.getEntity() instanceof Player)) {
@@ -181,7 +178,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
         if (!ChatColor.stripColor(inventory.getName()).equals("Enchantment Shop")) {
@@ -191,7 +187,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
         if (!ChatColor.stripColor(inventory.getName()).equals("Enchantment Shop")) {
