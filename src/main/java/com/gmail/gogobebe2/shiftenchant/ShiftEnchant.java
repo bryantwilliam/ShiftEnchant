@@ -119,7 +119,10 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            event.setCancelled(true);
+            return;
+        }
         if (event.getDamager() == null || event.getEntity() == null || !(event.getDamager() instanceof Player)
                 || !(event.getEntity() instanceof Player)) {
             return;
