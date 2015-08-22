@@ -117,7 +117,7 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) {
             event.setCancelled(true);
