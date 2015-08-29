@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -116,10 +115,9 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         return book;
     }
 
-    @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) {
+            event.setCancelled(true);
             return;
         }
         if (event.getDamager() == null || event.getEntity() == null || !(event.getDamager() instanceof Player)
@@ -129,11 +127,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
 
         Player damager = (Player) event.getDamager();
         Player damaged = (Player) event.getEntity();
-
-        if (event.getFinalDamage() < damaged.getHealth()) {
-            event.setCancelled(true);
-        }
-        damaged.damage(event.getFinalDamage());
 
         double base;
         ItemStack axe = damager.getItemInHand();
@@ -183,7 +176,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         damaged.updateInventory();
     }
 
-    @SuppressWarnings("unused")
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
@@ -193,7 +185,6 @@ public class ShiftEnchant extends JavaPlugin implements Listener {
         event.getPlayer().sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "Closing enchantment shop...");
     }
 
-    @SuppressWarnings("unused")
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
